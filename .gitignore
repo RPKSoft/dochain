@@ -1,1 +1,4 @@
 .vs/Dochain/v14/.suo
+[Bb]in
+*.log
+obj/

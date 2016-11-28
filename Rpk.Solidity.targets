@@ -1,0 +1,11 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildBinPath)\Microsoft.Common.targets" />
+    <PropertyGroup>
+        <CopyBuildOutputToOutputDirectory Condition="'$(CopyBuildOutputToOutputDirectory)'==''">false</CopyBuildOutputToOutputDirectory>
+    </PropertyGroup>
+    <Target Name="CoreCompile">
+        <Exec Command="solc -o$(OutDir) --bin --abi %(Compile.Identity)" />
+    </Target>
+    <Target Name="CreateManifestResourceNames" />
+    <Target Name="ResolveCodeAnalysisRuleSet" />
+</Project>
