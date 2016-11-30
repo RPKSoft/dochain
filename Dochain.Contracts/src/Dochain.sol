@@ -3,6 +3,8 @@ pragma solidity ^0.4.6;
 import "./Common.sol";
 
 contract Dochain is owned {
+    function Dochain() owned() {
+    }
     
     struct DocInfo {
         uint256 timestamp; 
@@ -17,13 +19,17 @@ contract Dochain is owned {
         var docInfo = DocInfo ({
             timestamp: block.timestamp,
             hash: hash,
-            sender: tx.origin
+            sender: msg.sender
         });
 
         if (db[name].hash != 0) {
             throw;
         }
         db[name] = docInfo;
+     }
+
+     function IsAvailable (string name) returns (bool) {
+        return (db[name].hash == 0);
      }
 
      function IsValid (string name, string data) returns (bool) {

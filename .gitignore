@@ -2,3 +2,9 @@
 [Bb]in
 *.log
 obj/
+/.vs
+*.svg
+/Dochain.Web/wwwroot/lib
+*.ico
+/packages
+/testchain/devChain/history

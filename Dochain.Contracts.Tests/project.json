@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0-*",
+  "testRunner": "xunit",
+
+  "dependencies": {
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "Microsoft.TestPlatform.ObjectModel": "15.0.0-preview-20161101-02",
+    "Nethereum.Web3": "1.0.3",
+    "NETStandard.Library": "1.6.1",
+    "System.Threading.Thread": "4.3.0",
+    "System.Threading.ThreadPool": "4.3.0",
+    "xunit": "2.2.0-beta4-build3444",
+    "xunit.runner.console": "2.2.0-beta4-build3444",
+    "xunit.runner.visualstudio": "2.2.0-beta4-build1194",
+    "xunit.runners": "2.0.0"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": [
+        "portable-net45+win8"
+      ],
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        }
+      }
+    }
+  },
+  "buildOptions": {
+    "copyToOutput": {
+      "include": [ "xunit.runner.json" ]
+    }
+  }
+}

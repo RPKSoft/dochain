@@ -16,7 +16,7 @@ contract owned {
         owner = newOwner;
     }
 
-    function getOwner() returns (address) {
+    function getOwner() constant returns (address) {
         return owner;
     }
 }
