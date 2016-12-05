@@ -13,22 +13,22 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\Dochain.Contracts\bin\Debug\Dochain.abi">
+    <None Include="..\Dochain.Contracts\bin\$(Configuration)\Dochain.abi">
       <Link>Dochain.abi</Link>
       <Visible>false</Visible>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\Dochain.Contracts\bin\Debug\Dochain.bin">
+    <None Include="..\Dochain.Contracts\bin\$(Configuration)\Dochain.bin">
       <Link>Dochain.bin</Link>
       <Visible>false</Visible>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\Dochain.Contracts\bin\Debug\owned.abi">
+    <None Include="..\Dochain.Contracts\bin\$(Configuration)\owned.abi">
       <Link>owned.abi</Link>
       <Visible>false</Visible>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\Dochain.Contracts\bin\Debug\owned.bin">
+    <None Include="..\Dochain.Contracts\bin\$(Configuration)\owned.bin">
       <Link>owned.bin</Link>
       <Visible>false</Visible>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

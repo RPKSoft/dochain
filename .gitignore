@@ -8,3 +8,6 @@ obj/
 *.ico
 /packages
 /testchain/devChain/history
+/testchain/devChain/geth/chaindata
+/testchain/devChain/geth/nodes
+/testchain/devChain/geth/nodekey
