@@ -11,3 +11,4 @@ obj/
 /testchain/devChain/geth/chaindata
 /testchain/devChain/geth/nodes
 /testchain/devChain/geth/nodekey
+*.jpg

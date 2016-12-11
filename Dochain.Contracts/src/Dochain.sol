@@ -14,8 +14,7 @@ contract Dochain is owned {
 
      mapping (string => DocInfo) private db;
 
-     function Add (string name, string data) {
-        var hash = sha256(data);
+     function Add (string name, bytes32 hash) {
         var docInfo = DocInfo ({
             timestamp: block.timestamp,
             hash: hash,
@@ -32,9 +31,12 @@ contract Dochain is owned {
         return (db[name].hash == 0);
      }
 
-     function IsValid (string name, string data) returns (bool) {
-        var hash = sha256(data);
+     function IsValid (string name, bytes32 hash) returns (bool) {
         var result = (hash == db[name].hash);
         return result;
+     }
+
+     function getDocInfo(string name) returns (uint256 timestamp, address sender) {
+         return (db[name].timestamp, db[name].sender);
      }
 }

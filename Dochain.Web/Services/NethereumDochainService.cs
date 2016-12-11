@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dochain.Web.Interfaces;
+using Nethereum.ABI.Util;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
@@ -10,18 +11,16 @@ namespace Dochain.Web.Services
 {
     public class NethereumDochainService : IDochainService
     {
-        private string _abi;
-        private Web3 _web3;
-        private string _address;
-        private string _senderAddress;
-        private string _password;
-        private Contract _contract;
+        private readonly string _abi;
+        private readonly Web3 _web3;
+        private readonly string _senderAddress;
+        private readonly string _password;
+        private readonly Contract _contract;
 
         public NethereumDochainService(string abi, string address, string senderAddress, string password) : 
             this(abi, senderAddress, password)
         {
-            _address = address;
-            _contract = _web3.Eth.GetContract(_abi, _address);
+            _contract = _web3.Eth.GetContract(_abi, address);
         }
 
         public NethereumDochainService(string abi, string senderAddress, string password)
@@ -34,10 +33,22 @@ namespace Dochain.Web.Services
 
         public async Task Add(string name, string value)
         {
+            var hash = new HexBigInteger(_web3.Sha3(value)).ToHexByteArray();
+            await AddHash(name, hash);
+        }
+
+        public async Task Add(string name, byte[] value)
+        {
+            var hash = new Sha3Keccack().CalculateHash(value);
+            await AddHash(name, hash);
+        }
+
+        private async Task AddHash(string name, byte[] hash)
+        {
             var function = _contract.GetFunction("Add");
             await UnlockAccount();
             var transactionHash = await function.SendTransactionAsync(_senderAddress, new HexBigInteger(500000), null, name,
-                value);
+                hash);
             await GetTransactionReceipt(transactionHash);
         }
 
@@ -51,9 +62,29 @@ namespace Dochain.Web.Services
 
         public async Task<bool> IsValid(string name, string value)
         {
+            var hash = new HexBigInteger(_web3.Sha3(value)).ToHexByteArray();
+            return await IsValidHash(name, hash);
+        }
+
+        public async Task<bool> IsValid(string name, byte[] value)
+        {
+            var hash = new Sha3Keccack().CalculateHash(value);
+            return await IsValidHash(name, hash);
+        }
+
+        public async Task<Document> GetDocumentInfo(string name)
+        {
+            await UnlockAccount();
+            var function = _contract.GetFunction("getDocInfo");
+            var result = await function.CallDeserializingToObjectAsync<Document>(name);
+            return result;
+        }
+
+        private async Task<bool> IsValidHash(string name, byte[] hash)
+        {
             await UnlockAccount();
             var function = _contract.GetFunction("IsValid");
-            var result = await function.CallAsync<bool>(name, value);
+            var result = await function.CallAsync<bool>(name, hash);
             return result;
         }
 

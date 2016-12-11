@@ -2,6 +2,8 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Nethereum.ABI.FunctionEncoding.Attributes;
+using Nethereum.ABI.Util;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
@@ -9,6 +11,16 @@ using Xunit;
 
 namespace Dochain.Contracts.Tests
 {
+    [FunctionOutput]
+    public class Document
+    {
+        [Parameter("uint256", "timestamp", 1)]
+        public ulong Timestamp { get; set; }
+
+        [Parameter("address", "sender", 3)]
+        public string Sender { get; set; }
+    }
+
     public class DochainTests
     {
         private string _abi;
@@ -41,21 +53,59 @@ namespace Dochain.Contracts.Tests
         }
 
         [Fact]
-        public async void ShouldValidateAddedValue()
+        public async void ShouldValidateAddedText()
         {
             var contract = await DeployContract();
             var function = contract.GetFunction("Add");
             var name = GenerateName();
+            var hash = new HexBigInteger(new Sha3Keccack().CalculateHash("test 1")).ToHexByteArray();
             var transactionHash = await function.SendTransactionAsync(SenderAddress, new HexBigInteger(500000), null, name,
-                "test1");
+                hash);
             var receipt = await GetTransactionReceipt(transactionHash);
             Assert.NotNull(receipt);
 
             function = contract.GetFunction("IsValid");
-            var result = await function.CallAsync<bool>(name, "test1");
+            var result = await function.CallAsync<bool>(name, hash);
             Assert.True(result);
-            result = await function.CallAsync<bool>(name, "test");
+            result = await function.CallAsync<bool>(name, new HexBigInteger(_web3.Sha3("test")).ToHexByteArray());
             Assert.False(result);
+        }
+
+        [Fact]
+        public async void ShouldValidateAddedData()
+        {
+            var contract = await DeployContract();
+            var function = contract.GetFunction("Add");
+            var name = GenerateName();
+            var hash = new Sha3Keccack().CalculateHash(new byte[] { 1, 2, 3 });
+            var transactionHash = await function.SendTransactionAsync(SenderAddress, new HexBigInteger(500000), null, name,
+                hash);
+            var receipt = await GetTransactionReceipt(transactionHash);
+            Assert.NotNull(receipt);
+
+            function = contract.GetFunction("IsValid");
+            var result = await function.CallAsync<bool>(name, hash);
+            Assert.True(result);
+            result = await function.CallAsync<bool>(name, new Sha3Keccack().CalculateHash(new byte[] { 1, 2, 3, 4 }));
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async void ShouldReturnDocInfo()
+        {
+            var contract = await DeployContract();
+            var function = contract.GetFunction("Add");
+            var name = GenerateName();
+            var hash = new Sha3Keccack().CalculateHash(new byte[] { 1, 2, 3 });
+            var transactionHash = await function.SendTransactionAsync(SenderAddress, new HexBigInteger(500000), null, name,
+                hash);
+            var receipt = await GetTransactionReceipt(transactionHash);
+            Assert.NotNull(receipt);
+
+            function = contract.GetFunction("getDocInfo");
+            var result = await function.CallDeserializingToObjectAsync<Document>(name);
+            Assert.Equal(SenderAddress, result.Sender);
+            Assert.NotNull(result.Timestamp);
         }
 
         private static string GenerateName()
